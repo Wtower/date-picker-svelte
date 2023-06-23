@@ -60,20 +60,40 @@ export function parse(str: string, tokens: FormatToken[], baseDate: Date | null)
     } else if (token.id === 'yyyy') {
       const value = parseUint(/^[0-9]{4}/, 0, 9999)
       if (value !== null) year = value
+    } else if (token.id === 'yy') {
+      const value = parseUint(/^(?:\d{4}|\d{2})/, 0, 9999)
+      if (value !== null) 
+        year = value > 100? value:
+        (value + 2000) > (new Date().getFullYear() + 7)? value + 1900: value + 2000
     } else if (token.id === 'MM') {
       const value = parseUint(/^[0-9]{2}/, 1, 12)
+      if (value !== null) month = value - 1
+    } else if (token.id === 'M') {
+      const value = parseUint(/^[0-1]?[0-9]/, 1, 12)
       if (value !== null) month = value - 1
     } else if (token.id === 'dd') {
       const value = parseUint(/^[0-9]{2}/, 1, 31)
       if (value !== null) day = value
+    } else if (token.id === 'd') {
+      const value = parseUint(/^[0-3]?[0-9]/, 1, 31)
+      if (value !== null) day = value
     } else if (token.id === 'HH') {
       const value = parseUint(/^[0-9]{2}/, 0, 23)
+      if (value !== null) hours = value
+    } else if (token.id === 'H') {
+      const value = parseUint(/^[0-2]?[0-9]/, 0, 23)
       if (value !== null) hours = value
     } else if (token.id === 'mm') {
       const value = parseUint(/^[0-9]{2}/, 0, 59)
       if (value !== null) minutes = value
+    } else if (token.id === 'm') {
+      const value = parseUint(/^[0-5]?[0-9]/, 0, 59)
+      if (value !== null) minutes = value
     } else if (token.id === 'ss') {
       const value = parseUint(/^[0-9]{2}/, 0, 59)
+      if (value !== null) seconds = value
+    } else if (token.id === 's') {
+      const value = parseUint(/^[0-5]?[0-9]/, 0, 59)
       if (value !== null) seconds = value
     }
   }
@@ -104,7 +124,15 @@ const ruleTokens: RuleToken[] = [
     toString: (d: Date) => d.getFullYear().toString(),
   },
   {
+    id: 'yy',
+    toString: (d: Date) => d.getFullYear().toString(),
+  },
+  {
     id: 'MM',
+    toString: (d: Date) => twoDigit(d.getMonth() + 1),
+  },
+  {
+    id: 'M',
     toString: (d: Date) => twoDigit(d.getMonth() + 1),
   },
   {
@@ -112,7 +140,15 @@ const ruleTokens: RuleToken[] = [
     toString: (d: Date) => twoDigit(d.getDate()),
   },
   {
+    id: 'd',
+    toString: (d: Date) => twoDigit(d.getDate()),
+  },
+  {
     id: 'HH',
+    toString: (d: Date) => twoDigit(d.getHours()),
+  },
+  {
+    id: 'H',
     toString: (d: Date) => twoDigit(d.getHours()),
   },
   {
@@ -120,7 +156,15 @@ const ruleTokens: RuleToken[] = [
     toString: (d: Date) => twoDigit(d.getMinutes()),
   },
   {
+    id: 'm',
+    toString: (d: Date) => twoDigit(d.getMinutes()),
+  },
+  {
     id: 'ss',
+    toString: (d: Date) => twoDigit(d.getSeconds()),
+  },
+  {
+    id: 's',
     toString: (d: Date) => twoDigit(d.getSeconds()),
   },
 ]
